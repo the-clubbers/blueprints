@@ -73,7 +73,7 @@ After importing the blueprint, create a new automation using it with these input
 Paste this URL directly into Home Assistant to import the blueprint:
 
 ```
-(https://raw.githubusercontent.com/the-clubbers/blueprints/refs/heads/main/task-cycle.yaml)
+https://raw.githubusercontent.com/the-clubbers/blueprints/refs/heads/main/task-cycle.yaml
 ```
 
 Paste it into Home Assistant under:  
