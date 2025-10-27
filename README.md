@@ -70,10 +70,10 @@ After importing the blueprint, create a new automation using it with these input
 
 ## 📥 Import the Blueprint
 
-After pushing this YAML to GitHub, copy the link to the raw file or use the GitHub blob URL like this:
+Paste this URL directly into Home Assistant to import the blueprint:
 
 ```
-https://github.com/<your-username>/<repo-name>/blob/main/blueprints/automation/<your-folder>/task_cycle_done_due_reactivate.yaml
+(https://raw.githubusercontent.com/the-clubbers/blueprints/refs/heads/main/task-cycle.yaml)
 ```
 
 Paste it into Home Assistant under:  
