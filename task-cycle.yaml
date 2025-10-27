@@ -1,0 +1,75 @@
+blueprint:
+  name: "Task-Cycle: done → set due date → auto re-enable"
+  description: >
+    This automation manages a recurring task:
+    When the task toggle (input_boolean) is turned OFF (marked as done), it sets a new due date.
+    Every day (or when triggered manually), it checks if the task is due again and reactivates it if needed.
+    Requirements: • One input_boolean per task • One input_datetime (date only) to store the next due date • A repeat interval in days
+
+  domain: automation
+
+  input:
+    task_toggle:
+      name: Task toggle
+      description: The input_boolean representing the task (OFF = done)
+      selector:
+        entity:
+          domain: input_boolean
+
+    due_date:
+      name: Due date
+      description: The input_datetime storing the next due date (date only)
+      selector:
+        entity:
+          domain: input_datetime
+
+    interval_days:
+      name: Days until next due date
+      default: 90
+      selector:
+        number:
+          min: 1
+          max: 365
+          unit_of_measurement: days
+          mode: slider
+
+    check_time:
+      name: Daily check time
+      description: Time of day to check if task should be reactivated. Also used if the automation is run manually.
+      default: "04:00:00"
+      selector:
+        time: {}
+
+trigger:
+  - platform: state
+    entity_id: !input task_toggle
+    to: "off"
+  - platform: time
+    at: !input check_time
+
+variables:
+  task_entity: !input task_toggle
+  due_date_entity: !input due_date
+  interval: !input interval_days
+
+action:
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.entity_id == task_entity }}"
+        sequence:
+          - service: input_datetime.set_datetime
+            data:
+              entity_id: "{{ due_date_entity }}"
+              date: "{{ (now() + timedelta(days=interval)).strftime('%Y-%m-%d') }}"
+
+  - condition: template
+    value_template: >
+      {{ now().date() >= as_datetime(states(due_date_entity)).date()
+         and is_state(task_entity, 'off') }}
+
+  - service: input_boolean.turn_on
+    target:
+      entity_id: "{{ task_entity }}"
+
+mode: single
